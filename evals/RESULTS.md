@@ -33,3 +33,29 @@ skill loaded, run against a scratch copy of `examples/sample-vault/`.
 Notes: the rubric asks for two consecutive passes per scenario before a scenario
 is considered locked; the runs above are the first pass. Re-run before each
 release.
+
+## 0.1.0 — validation pass 2
+
+**autonomous-cold-start** — PASS (2nd consecutive). Fresh subagent, no config:
+auto-detected `llm-wiki`, wrote best-effort config with assumptions documented,
+dreamed end-to-end without an interview gate, consumed seeds, emptied `seeds.md`,
+left `ledger.md` untouched (no reaction/promotion). → **locked (2/2).**
+
+**reasoning-transparency** — PASS (2nd consecutive, observed in the cold-start
+run): every idea carried Assumption / Recombined nodes / Confidence + falsifier;
+session closed with a "How I dreamed this" meta-note (leap, patterns, discards,
+assumptions). → **locked (2/2).**
+
+**honors-taste-and-grounding** — PASS (2nd consecutive): honored the `dropped`
+SaaS theme (named as discarded, ledger cited); links resolved; web claims cited;
+at least one holistic idea. → **locked (2/2).**
+
+**adaptive-routing (Variant B, host has skills)** — PASS (1st): with host skills
+`brainstorm` / `capture-task` / `content-draft` available, promoting the content
+idea routed to `content-draft` (the matching capability) and explicitly did NOT
+write the `dreams/promoted/` file fallback; updated `index.md` + `ledger.md`;
+kept the external-facing draft approval-gated.
+
+**Status:** all four scenarios have passed; cold-start / reasoning / taste are
+locked at 2/2. Routing has one pass per variant (A fallback + B host-skill);
+re-run once more before tagging a release.
