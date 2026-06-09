@@ -1,0 +1,9 @@
+# Muse private dream data
+# Copy this into your project .gitignore if the repo is public or shared.
+dreams/
+
+# Common local secrets/caches
+.env
+.env.*
+*.log
+.DS_Store

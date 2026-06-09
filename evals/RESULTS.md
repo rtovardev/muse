@@ -5,6 +5,51 @@ skill loaded, run against a scratch copy of `examples/sample-vault/`.
 
 ---
 
+## 0.2.0 — hardening validation
+
+Status: not yet fully run. This release adds new release-gate scenarios and a
+lightweight structure checker. Before tagging, run each scenario twice
+consecutively and append results here.
+
+Initial static checks:
+- `python3 evals/check_dream.py examples/sample-output/2025-01-15-001-dream.md` — PASS.
+- `python3 -m py_compile evals/check_dream.py` — PASS.
+- `git diff --check` — PASS.
+
+Smoke eval notes:
+- `autonomous-cold-start` first Codex subagent run produced a structurally valid
+  dream and correct files, but exposed two instruction gaps: seed punctuation was
+  normalized instead of copied exactly, and the final response did not offer
+  config refinement. v0.2 instructions were tightened after this run.
+- `autonomous-cold-start` second Codex subagent run — PASS: produced
+  `dreams/2026-06-09-001-dream.md`, auto-configured, copied seeds exactly,
+  cleared seeds after writes, updated index, and offered config refinement.
+- `same-day-two-runs` smoke run — PASS: second run wrote
+  `dreams/2026-06-09-002-dream.md`, preserved the first dream hash, used `002`
+  idea IDs, copied the new seed exactly, and appended index rows.
+- `privacy` smoke run — PASS: fake API key absent from all `dreams/` files,
+  private client quote absent, redaction noted, checker passed.
+- `scheduled-safe` smoke run — PASS: scheduled run wrote dream/index/run-log,
+  cleared seeds after writes, created no promoted files, recorded no promotion,
+  checker passed.
+- `adaptive-routing` Variant A smoke run — PASS: selected decision idea routed to
+  `dreams/decisions.md`, index state changed to `promoted`, ledger got a
+  `promoted` entry, and no nonexistent host skill was claimed.
+
+Required manual scenarios:
+- autonomous-cold-start
+- reasoning-transparency
+- adaptive-routing variants A/B/C
+- honors-taste-and-grounding
+- spanish-language
+- no-memory
+- web-disabled
+- same-day-two-runs
+- scheduled-safe
+- privacy
+
+---
+
 ## 0.1.0 — initial validation
 
 **autonomous-cold-start** — PASS
