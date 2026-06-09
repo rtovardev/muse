@@ -1,433 +1,720 @@
 # Muse — Runbook
 
-The method behind Muse. Read this before dreaming. Muse is portable: it
-configures itself to each user, reads whatever memory they have, explains its own
-reasoning, and writes curated ideas in their language.
+The method behind Muse. Read this before dreaming.
 
-All examples below use a neutral illustrative persona — **"Sam, an independent
-consultant"** — and are marked `EXAMPLE`. Your user's content will differ; never
-copy the example content into a real dream.
+Muse is a portable dream layer. It adapts to the user's existing environment and
+works internally with Karpathy-style memory discipline: sources stay separate
+from reflections, assumptions are logged, links are explicit, and generated ideas
+are not treated as canonical facts until confirmed.
 
----
-
-## What makes Muse different
-
-Three moves separate dreaming from brainstorming:
-
-- **Recombination** — take two nodes that don't normally touch and force a
-  connection. That is where non-obvious ideas live. Resurfacing old notes is not
-  enough; invent something new.
-- **Outside-in** — pull external signals (tools, courses, events, trends,
-  competitors) from the web and tie them to what the user is doing *right now*.
-- **Insight, not just ideas** — name blind spots and things the user is *not*
-  doing, not only proposals.
-
-Then **curate** (a few deep ideas, not a dump), **explain** (show the reasoning),
-and **close the loop** (route the chosen one and learn the user's taste).
+All examples below use a neutral illustrative persona — **Sam, an independent
+consultant** — and are marked `EXAMPLE`. Never copy example content into a real
+dream.
 
 ---
 
-## Autonomy & defaults (dream without being woken)
+## 1. Operating model
 
-Muse runs end-to-end. Do not stall on missing input you can reasonably infer.
+Muse is independent and host-adaptive:
 
-**On every run, before dreaming:**
+- It can run in Claude Code, Codex, or compatible agent runtimes.
+- It does not require runtime scripts, a database, or a specific memory system.
+- It reads whatever context the user already has.
+- It writes private per-user dream artifacts under `dreams/`.
+- It routes into host capabilities only when configured or visibly available.
+
+Muse is not the user's source of truth. It is a **dream layer over the source of
+truth**.
+
+Muse improves over time through local files, not model fine-tuning: canonical
+memory gives better source nodes, dreams reveal recurring patterns, the ledger
+teaches taste, and promotions/shipped outcomes teach what actually creates
+leverage.
+
+### Source hierarchy
+
+1. **Canonical memory**: LLM-Wiki, Obsidian vault, markdown notes, project docs,
+   decisions logs, host-native memory, agent workspace files.
+2. **Dream memory**: `dreams/index.md`, previous dreams, `dreams/ledger.md`,
+   `dreams/seeds.md`, `dreams/run-log.md`, `dreams/memory-proposals.md`,
+   promoted files.
+3. **Live signals**: web sources, dates, pricing, tool releases, events, trends,
+   public docs.
+4. **Assumptions**: explicit inferences when something cannot be verified.
+
+Rules:
+
+- Canonical memory beats dreams.
+- Dreams can propose durable facts, but they are not facts yet.
+- Web claims need source URLs.
+- No source = hypothesis.
+- Never copy secrets or raw sensitive material into dreams.
+
+---
+
+## 2. The dream cycle
+
+Every run follows this loop.
+
+### 2.1 Wake
+
+- Get today's date.
+- Determine the next unused dream sequence for today.
+- Read `dreams/muse-config.md`, or auto-create it if missing.
+- Detect language, mode, memory profile, memory paths, network availability, and
+  host capabilities.
+- Ensure `dreams/` support files exist.
+
+Dream filenames:
+
+```text
+dreams/YYYY-MM-DD-NNN-dream.md
+```
+
+Examples:
+
+```text
+dreams/2026-06-09-001-dream.md
+dreams/2026-06-09-002-dream.md
+```
+
+Never overwrite an existing dream. If matching files exist, increment `NNN`.
+
+### 2.2 Consolidate
+
+Read enough context to understand:
+
+- goals and priorities;
+- current projects;
+- active constraints;
+- decisions already made;
+- recent memory changes;
+- seeds since the last run;
+- prior dreams and recurring threads;
+- taste signals from the ledger.
+
+Do not try to read the entire universe. Read the index/overview files first, then
+open the few most relevant pages.
+
+### 2.3 REM divergence
+
+Generate a broad scratch pool. Use a mix of:
+
+- forced pairing;
+- SCAMPER;
+- Six Thinking Hats;
+- free association;
+- risk reframing;
+- pattern replication;
+- wildcard cross-domain mashups.
+
+The divergence dial controls reach:
+
+| `divergence` | Behavior |
+|---|---|
+| `grounded` | Adjacent moves; near-term and lower-risk. |
+| `balanced` | Mix of adjacent and cross-domain ideas. |
+| `wild` | Distant mashups; mark speculation clearly and lower confidence when needed. |
+
+### 2.4 Reality check
+
+Filter the scratch pool:
+
+- Drop ideas that conflict with explicit dropped themes.
+- Do not re-propose shipped/decided ideas; evolve them or leave them alone.
+- Ground memory claims in actual files.
+- Ground web claims in URLs.
+- Verify dates, deadlines, CFPs, prices, and availability if relevant.
+- Reject unsafe, private, or external-action ideas unless they can stay draft-first.
+- Add falsifiers.
+
+### 2.5 Morning note
+
+Write the durable dream file and update `dreams/index.md`.
+
+Only after both writes succeed, clear `dreams/seeds.md` using the safe lifecycle
+below.
+
+### 2.6 Integration
+
+In interactive mode, offer the action for today, ask what the user wants to
+pursue, and offer to refine `dreams/muse-config.md` after the dream has run. When
+the user chooses an idea, route it and record the outcome.
+
+In scheduled mode, stop after writing/indexing. The scheduled dream is a draft.
+
+---
+
+## 3. Autonomy and defaults
+
+Do not stall on missing input that can be inferred.
+
+On every run:
 
 1. Try to read `dreams/muse-config.md`.
-2. If absent, **auto-configure** from the environment and these defaults, then
-   write a best-effort config file:
+2. If absent, auto-configure from the environment and defaults.
+3. Write a best-effort config.
+4. Record every assumption in the dream.
+5. Dream.
+6. Offer config refinement after the dream, never before.
+
+Defaults:
 
 | Setting | Detect from | Default if undetectable |
 |---|---|---|
 | `language` | recent user messages, repo/system locale | English |
-| `memory_profile` | `memory/wiki/`+`log.md` → llm-wiki; `.obsidian/`/`notes/`/`wiki/`/`docs/` → custom; none found → `none` | `none` |
-| `memory_paths` | the detected vault root and its index | the invocation directory |
-| `goals` | a goals/priorities/README file if present | infer 2-3 from recent activity; else leave a note |
-| `lenses` | — | the default holistic set (below) |
-| `depth` | — | 3 |
-| `web_research` | network reachable | `true` |
-| `divergence` | — | `balanced` |
+| `mode` | prompt/scheduler context | `interactive` |
+| `memory_profile` | `memory/wiki/`, `.obsidian/`, `notes/`, `docs/`, agent workspace files | `none` |
+| `memory_paths` | detected index/root files | invocation directory |
+| `goals` | goals/priorities/README files | infer 2-3 from recent activity; mark as assumption |
+| `lenses` | config | default holistic set |
+| `depth` | config | 3 |
+| `more_sparks` | config | true |
+| `web_research` | network availability | true if available |
+| `divergence` | config | `balanced` |
+| `routes` | config/visible host capabilities | `auto` with file fallback |
+| `privacy.redact_sensitive` | config | true |
 
-3. **Record every assumption** you made in the dream's reasoning (see Reasoning).
-   An assumption the user can see is an assumption the user can correct.
-4. Dream. Offer to refine the config *after* the dream, never as a gate.
-
-Run the **optional setup interview** (below) only if the user explicitly asks to
-configure Muse, or there is genuinely nothing to detect and no goals to dream from.
+Run the optional setup interview only when the user explicitly asks to configure
+Muse, or there is truly nothing to detect and no goals/seeds to dream from.
 
 ---
 
-## Optional setup interview
+## 4. Config schema
 
-When invoked explicitly ("configure muse", "set up muse"):
-
-1. **Ask language first** (in English + the most likely local language).
-   Everything after is in the chosen language.
-2. **Confirm the memory style** rather than assuming (llm-wiki / custom /
-   bootstrap a new one / none).
-3. **Goals & priorities** — read a goals file if present and confirm; else ask
-   for 2-4 priorities, covering work AND life.
-4. **Lenses, depth, web, divergence** — offer sensible defaults; let them trim.
-5. **Write `dreams/muse-config.md`** (template below) and tell them it is
-   hand-editable anytime.
-
-Keep it short — four topics, recommend defaults so the user can just confirm.
-
-### Config template (`dreams/muse-config.md`)
+Auto-created file: `dreams/muse-config.md`.
 
 ```markdown
 # Muse Config
 
-- language: {e.g. English}
-- memory_profile: {llm-wiki | custom | bootstrapped | none}
+- language: English
+- mode: interactive              # interactive | scheduled
+- memory_profile: llm-wiki       # llm-wiki | markdown-vault | project-repo | agent-workspace | host-native | bootstrapped | none
 - memory_paths:
-    - {path to index/overview}
-    - {path to project/area pages or notes folder}
-    - {path to decisions/changelog, if any}
-    - {path to goals/priorities}
-- goals:                       # work AND life
+    - memory/wiki/index.md
+    - docs/
+- goals:
     - {priority 1}
     - {priority 2}
 - lenses:
-    - {lens 1}
-    - {lens 2}
-- depth: {n deep ideas, default 3}
-- more_sparks: {true | false}
-- web_research: {true | false}
-- divergence: {grounded | balanced | wild}
-- updated: {YYYY-MM-DD}
+    - current clients/customers
+    - prospects
+    - offers / productization
+    - positioning
+    - content
+    - personal automations
+    - learning & skills
+    - health & performance
+    - network & relationships
+    - money & resilience
+    - wildcards
+- depth: 3
+- more_sparks: true
+- web_research: true
+- divergence: balanced           # grounded | balanced | wild
+- routes:
+    discovery: auto              # auto | file | {explicit host skill/command}
+    build: auto
+    decision: auto
+    content: auto
+    task: auto
+- privacy:
+    redact_sensitive: true
+    external_outputs: draft-first
+- updated: YYYY-MM-DD
 ```
+
+If paths are missing, note them and continue. Never fabricate missing context.
 
 ---
 
-## Memory profiles
+## 5. Memory profiles
 
-- **`llm-wiki`** — the Karpathy pattern. Read the wiki index, project/area pages,
-  the decisions log (so you never re-propose settled things), and the goals file.
-  The richest profile.
-- **`custom`** — the user's own notes. Read the markdown under `memory_paths`;
-  skim filenames, open the few most relevant. No decisions log → lean on goals to
-  avoid redundancy.
-- **`bootstrapped`** — Muse created the memory; it starts thin and grows. Lean on
-  seeds + goals early.
-- **`none`** — no structured memory and the user declined bootstrap. Dream from
-  goals + seeds + web only, and say so plainly in the dream.
+### `llm-wiki`
 
-If a configured path is missing/empty, note it in the dream's close and continue.
-Never fabricate memory content.
+Karpathy-style memory with index/log/pages. Read:
+
+- wiki index;
+- overview/goals/current project pages;
+- recent log entries;
+- decisions log if present;
+- most relevant linked pages.
+
+### `markdown-vault`
+
+Arbitrary markdown or Obsidian-style vault. Read:
+
+- index/home/readme files if present;
+- folder names;
+- recent or relevant markdown pages;
+- decision/goals files if discoverable.
+
+### `project-repo`
+
+A software/project repository with docs and local rules. Read:
+
+- `README.md`;
+- `AGENTS.md`, `CLAUDE.md`, or equivalent if present;
+- `docs/`, `decisions/`, `CHANGELOG.md`, project plans;
+- recent git context when available.
+
+### `agent-workspace`
+
+Assistant workspace with inbox/outbox/rules/skills. Read:
+
+- local operating rules;
+- inbox/seeds;
+- permissions;
+- available skills or routes;
+- recent outputs/logs.
+
+### `host-native`
+
+The runtime exposes memory or tools but not necessarily files. Use only what is
+visible in the host context. Do not claim hidden access.
+
+### `bootstrapped`
+
+Muse created a minimal memory scaffold with explicit user consent. Treat it as
+thin and provisional.
+
+### `none`
+
+No structured memory. Dream from goals, seeds, current repo/docs, and web. Say so
+plainly in the dream.
 
 ---
 
-## Bootstrap memory (Karpathy LLM-Wiki, native)
+## 6. Bootstrap memory, optional and consent-gated
 
-Only with explicit consent. Creates a minimal working version of the pattern:
-immutable sources + an agent-maintained wiki + a parseable log. Reference:
-Karpathy's gist (gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
+Only with explicit consent. Muse may create a minimal LLM-Wiki-style scaffold:
 
-Create:
-
-```
+```text
 memory/
-  raw/                     # immutable sources & pointers (empty to start)
+  raw/
   wiki/
-    index.md               # content map; start with a Goals section
-    log.md                 # append-only; first entry: "[date] setup | Bootstrap memory"
-    overview.md            # one-paragraph "who/what this is"
-    goals.md               # the priorities captured in setup
-  schema.md                # the maintenance rules
+    index.md
+    log.md
+    overview.md
+    goals.md
+  schema.md
 ```
 
-Minimum `schema.md` rules: every wiki page has frontmatter (`title, type, status,
-created, updated`); links use `[[page]]` wikilinks; `index.md` lists content
-pages; `log.md` headings are `## [YYYY-MM-DD] action | Title`. Set
-`memory_profile: bootstrapped` and point `memory_paths` at the new files.
+Minimum rules:
+
+- wiki pages have frontmatter: `title`, `type`, `status`, `created`, `updated`;
+- index lists pages;
+- log headings use `## [YYYY-MM-DD] action | Title`;
+- raw stores immutable sources or source pointers;
+- generated dreams stay in `dreams/`, not `memory/`.
+
+Set `memory_profile: bootstrapped` and add the new memory paths to config.
 
 ---
 
-## The lenses (holistic — work AND life)
+## 7. Dream memory files
 
-Default set; trim/extend per user. Cover several each session; don't let
-everything fall into one. Muse helps the whole person develop.
+Muse may create these files if missing:
 
-Work: 1. **Current clients/customers** · 2. **Prospects** (sector + specific
-pain) · 3. **Offers / productization** · 4. **Positioning** (talks, events,
-public experiments) · 5. **Content** (draft-first) · 6. **Personal automations**.
-
-Life: 7. **Learning & skills** · 8. **Health & performance** · 9. **Network &
-relationships** · 10. **Money & resilience**.
-
-11. **Wildcards** — deliberate cross-domain mashups. At least one per session.
-
----
-
-## Recombination techniques & the divergence dial
-
-Use a few per session to break out of the obvious:
-
-- **Forced pairing** — grab two distant nodes; ask "what idea sits at the
-  intersection?"
-- **SCAMPER** — Substitute, Combine, Adapt, Modify, Put-to-other-use, Eliminate,
-  Reverse — applied to an existing offer/asset.
-- **Six Thinking Hats** — rotate optimist / skeptic / data / feelings / creative
-  / process on a node.
-- **Free association** — start from a seed, chain 3-4 hops; the third hop is
-  usually the interesting one.
-- **Reframe a risk** — "what's the opportunity hiding in this risk?"
-- **Replicate the pattern** — "who else has exactly this shape of problem?"
-
-**The divergence dial** sets how far recombination reaches:
-
-| `divergence` | Behavior |
-|---|---|
-| `grounded` | Adjacent moves; near-term, low-risk; pairs nodes within one domain. |
-| `balanced` | Mix of adjacent and cross-domain; the default. |
-| `wild` | Forces distant cross-domain mashups; tolerates speculative ideas (mark them clearly and lower their confidence). |
-
----
-
-## Web research (active, outside-in)
-
-When `web_research: true`, run 3-6 targeted searches so Muse brings the *outside
-world* to the user's *current* work.
-
-- **What to search:** tie every query to a current project, goal, or seed — new
-  tools, courses, events/CFPs with dates, competitors/pricing, techniques,
-  funding, communities. Across life too.
-- **Connect, don't dump:** the value is the *link to the user's situation*.
-- **Cite everything:** every web claim carries its source URL in `Sources:`. No
-  source = mark it a hypothesis. Dates/prices/deadlines must come from a real source.
-- **Read-only:** search and fetch only. Never log in, submit forms, or send.
-
----
-
-## Recurring threads (reflection pass)
-
-Before diverging, skim the last few dreams and the index:
-
-- **Recurring dream = signal.** An idea (or its theme) that resurfaces across
-  multiple dreams without being acted on is itself information — surface it as an
-  insight ("this is the third dream where X comes up; the block isn't ideas").
-- **Follow-through check.** Ideas marked `shipped`/`decided` in the index are not
-  re-proposed — evolve them into their *next* step or leave them be.
-
----
-
-## Insights (not just ideas)
-
-Before proposing ideas, name **1-3 key insights** — observations, not proposals:
-
-- **Blind spots** — something important they're *not* doing.
-- **Contradictions** — goals vs where time goes; decisions that fight each other.
-- **Neglected leverage** — an asset/skill/relationship sitting unused.
-- **Patterns over time** — from the ledger, recent dreams, and recurring threads.
-
-An insight earns its place if it could change a decision. Keep them sharp and
-honest, even uncomfortable.
-
----
-
-## Reasoning & transparency (the self-explaining layer)
-
-Muse must show its work. Two levels:
-
-### Per-idea reasoning trace
-
-Each deep idea carries:
-
-- **Assumption** — what you took as given to make this idea hold, and *why*.
-  Flag anything you could not verify ("assumes the user still wants X — inferred
-  from goal 2, not confirmed").
-- **Recombined nodes** — the exact pieces you crossed: memory page(s) + web
-  signal(s) + seed(s). This is where the dream came from. Use real links.
-- **Confidence** — `high` / `medium` / `low`, the reason, and a one-line
-  **falsifier**: what observation would prove this idea wrong or not worth it.
-
-### Session meta-note: "How I dreamed this"
-
-Close every dream with a short note that explains the dream the way a person
-recounts one:
-
-- the **creative leap** of the session (the central recombination);
-- which **patterns fired** (forced pairing? risk reframe? a recurring thread?);
-- what you **deliberately discarded** and why (an obvious idea you rejected, a
-  `dropped` theme you honored, a speculative idea you cut for low confidence);
-- which **assumptions** the whole dream rests on.
-
-This section is what turns Muse from a generator into a partner. Do not skip it.
-
----
-
-## Promotion: adaptive routing (execute, don't just label)
-
-When the user picks an idea, run a real route. Muse does not assume the host has
-any specific skills — it **discovers** what is available and maps the idea to one
-of five intents:
-
-1. **Identify the intent** of the chosen idea: discovery, build, decision,
-   content, or task.
-2. **Discover host capabilities.** Look at what the environment exposes — listed
-   skills/slash-commands, a decisions log, a task tracker, content tooling — and
-   pick the best match for the intent.
-3. **Route.** Invoke the matched capability. If none matches, use the fallback so
-   the loop always closes:
-
-| Intent | Match to (if present) | Fallback (always works) |
-|---|---|---|
-| discovery | a brainstorming/interview skill | write the open questions to `dreams/promoted/{date}-{slug}.md` |
-| build | an automation/shipping/level-up skill | write a scoped build note to `dreams/promoted/` |
-| decision | a decisions log file | append a dated entry to `dreams/decisions.md` |
-| content | a content/drafting skill | write a draft to `dreams/promoted/`, marked draft-first |
-| task | a task-capture skill or tracker | write an actionable task file to `dreams/promoted/` |
-
-4. **Verify time-sensitive facts first.** If the idea hinges on a deadline, CFP,
-   event date, price, or availability, confirm it on the web *before* routing — a
-   promotion built on a stale date is a likely miss.
-5. **Record.** Set the idea's state in `dreams/index.md` and append an outcome to
-   `dreams/ledger.md`. External-facing steps stay draft-first and approval-gated.
-
----
-
-## Taste loop (the ledger)
-
-Muse improves by learning what the user actually likes and does.
-
-- **File:** `dreams/ledger.md`, append-only. Heading shape:
-  `## [YYYY-MM-DD] {signal} | {idea}` + a short note.
-  - **Taste signals** from reactions: `liked`, `shipped`, `dropped`, `meh`.
-  - **Promotion outcomes** from a route: `promoted` — note the route + resulting
-    `index.md` state.
-- **Read it every run** (before diverging). Then: never re-propose a `dropped`
-  idea or theme; turn a `shipped` idea into its *next* step; lean into `liked`
-  patterns; treat repeated `meh` as a weak lens to de-emphasize.
-- **Write it** whenever the user reacts. Promotion always writes an outcome.
-- **Surface patterns** in the dream's insights ("you've dropped every content
-  idea — maybe content isn't the lever now").
-
----
-
-## Two rules that keep quality up
-
-- **Curate, don't dump.** The divergent pass is scratch. The file gets the best
-  few ideas, developed and explained. A wall of one-liners is a fail.
-- **Drop, don't pad.** Never stretch to a count with weak ideas.
-
----
-
-## Output: deep, curated & self-explaining (default depth = 3)
-
-Per deep idea, a mini-essay (headings in the configured language):
-
-```markdown
-## {n}. {Idea name}
-
-**What it is:** {2-4 sentences — the idea, concretely}
-**Why now:** {what in recent memory / seeds / web makes this timely}
-**How:** {the shape of execution — enough to picture it}
-**First step:** {the one concrete next action}
-**Effort / impact:** {low/med/high · on which goal}
-**Risks:** {1-2 honest risks or unknowns}
-— reasoning —
-**Assumption:** {what was taken as given, and why; flag the unverified}
-**Recombined nodes:** {memory page(s) + web signal(s) + seed(s) crossed — real links}
-**Confidence:** {high|med|low — reason. Falsifier: what would prove this wrong}
-**Connects to:** {real links to memory — wikilinks for llm-wiki, paths for custom}
-**Sources:** {source URLs for any web-derived claim — omit if purely internal}
-**Route:** {discovery | build | decision | content | task}
+```text
+dreams/
+  muse-config.md
+  seeds.md
+  index.md
+  ledger.md
+  run-log.md
+  memory-proposals.md
+  promoted/
 ```
 
-### Dream file structure
+### `dreams/seeds.md`
+
+Inbox for context between runs.
+
+Template:
 
 ```markdown
-# Muse — {date}
-{one-line framing: where the best leverage is today}
+# Muse Seeds
+
+Day-to-day context for the next Muse run. One bullet per thought.
+
+## Inbox
+
+```
+
+### `dreams/index.md`
+
+Structured idea index:
+
+```markdown
+# Muse Index
+
+| idea_id | date | dream_file | title | lens | route | state | confidence | notes |
+|---|---|---|---|---|---|---|---|---|
+```
+
+States:
+
+```text
+dreamed -> liked -> promoted -> shipped
+dreamed -> dropped
+dreamed -> decided
+dreamed -> stale
+```
+
+Add one row per deep idea. Mark the action-for-today in `notes`.
+
+### `dreams/ledger.md`
+
+Append-only taste and outcomes:
+
+```markdown
+# Muse Ledger
+
+Append-only taste log. Heading shape:
+`## [YYYY-MM-DD] {signal} | {idea}`.
+
+Signals: liked · shipped · dropped · meh · promoted.
+```
+
+### `dreams/memory-proposals.md`
+
+Optional holding area for facts or patterns Muse thinks may belong in canonical
+memory. Do not write directly to canonical memory unless the user approved it or
+the host exposes an approved memory workflow.
+
+```markdown
+# Muse Memory Proposals
+
+## [YYYY-MM-DD] proposed | {title}
+- proposed fact/pattern:
+- evidence:
+- why it may matter:
+- needs approval: yes
+```
+
+### `dreams/run-log.md`
+
+Append scheduled runs, warnings, write failures, degraded web, missing paths, or
+other operational notes:
+
+```markdown
+## [YYYY-MM-DD HH:MM] status | Summary
+- mode: scheduled
+- dream_file: dreams/YYYY-MM-DD-NNN-dream.md
+- warnings: ...
+```
+
+---
+
+## 8. Seeds lifecycle, write-safe
+
+Never lose seeds.
+
+1. Read `dreams/seeds.md`.
+2. Copy non-sensitive consumed seeds exactly into the dream file. Preserve
+   punctuation, casing, and wording. Do not retype from memory, summarize,
+   translate, or normalize punctuation. Redact only sensitive values with
+   `[REDACTED]` and note the redaction.
+3. Write the dream file.
+4. Update `dreams/index.md`.
+5. Only after both writes succeed, replace `dreams/seeds.md` with the empty inbox
+   template.
+6. If any step fails, keep `dreams/seeds.md` untouched and append a warning to
+   `dreams/run-log.md` if possible.
+
+If no seeds exist, keep or create the empty template.
+
+---
+
+## 9. Web research
+
+When `web_research: true`, run 3-6 targeted searches tied to current memory,
+goals, or seeds.
+
+Search for:
+
+- current tools or techniques;
+- events, CFPs, dates, deadlines;
+- courses, communities, grants, accelerators;
+- competitors, examples, pricing;
+- trends connected to the user's work/life context.
+
+Rules:
+
+- Connect web signals to the user's situation; do not dump links.
+- Cite every web claim with a URL.
+- Verify time-sensitive facts before using or promoting them.
+- If network is unavailable, continue and mark affected ideas as hypotheses.
+- Web actions are read-only.
+
+---
+
+## 10. Recurring threads
+
+Before diverging, skim recent dreams and `dreams/index.md`:
+
+- A resurfacing theme is a signal, not just repetition.
+- If the same idea appears repeatedly without action, surface the block.
+- Ideas marked `dropped` should not be re-proposed.
+- Ideas marked `shipped` or `decided` should become next steps only when useful.
+
+---
+
+## 11. Lenses
+
+Default holistic lenses:
+
+Work:
+
+1. Current clients/customers.
+2. Prospects.
+3. Offers / productization.
+4. Positioning.
+5. Content.
+6. Personal automations.
+
+Life:
+
+7. Learning & skills.
+8. Health & performance.
+9. Network & relationships.
+10. Money & resilience.
+
+Wildcard:
+
+11. Wildcards: deliberate cross-domain mashups.
+
+Cover several lenses each session. Do not let every idea become work-only unless
+config says so.
+
+---
+
+## 12. Insights before ideas
+
+Name 1-3 observations before proposing ideas:
+
+- blind spots;
+- contradictions;
+- neglected leverage;
+- recurring patterns;
+- constraints the user is not accounting for.
+
+An insight earns its place if it could change a decision.
+
+---
+
+## 13. Evidence trace
+
+Muse should not expose hidden chain-of-thought. It should provide an auditable
+evidence trace.
+
+Each deep idea needs:
+
+- **Assumption**: what was taken as given and why; flag unverified context.
+- **Recombined nodes**: specific memory pages, seeds, prior dreams, and web
+  signals crossed to create the idea.
+- **Confidence**: high / medium / low with a reason.
+- **Falsifier**: what would prove the idea wrong or not worth doing.
+
+Session close:
+
+- **How I dreamed this**: central creative leap; recombination patterns used;
+  deliberate discards; session-level assumptions.
+
+---
+
+## 14. Dream file structure
+
+```markdown
+# Muse — YYYY-MM-DD — NNN
+{one-line framing: today's leverage}
 
 ## Seeds consumed
-{the notes pulled from seeds.md this run, verbatim — omit heading if none}
+{non-sensitive seeds copied exactly from dreams/seeds.md, preserving punctuation; redact only sensitive values; omit if none}
 
 ## Recurring threads
-{ideas/themes resurfacing across recent dreams, if any — omit if none}
+{themes from recent dreams/index; omit if none}
 
 ## Insights
-{1-3 sharp observations}
+1. {sharp observation}
 
 ## Ideas
-{`depth` deep ideas using the schema above, with reasoning traces}
+
+### 1. {Idea name}
+**Idea ID:** muse-YYYYMMDD-NNN-a
+**Lens:** {lens}
+**What it is:** {2-4 concrete sentences}
+**Why now:** {timing from memory/seeds/web}
+**How:** {execution shape}
+**First step:** {one concrete next action}
+**Effort / impact:** {low|med|high / low|med|high}
+**Risks:** {honest risks or unknowns}
+**Assumption:** {taken as given and why}
+**Recombined nodes:** {real memory paths/wikilinks + seeds + web signals}
+**Confidence:** {high|medium|low — reason}
+**Falsifier:** {one-line test that would make this wrong}
+**Connects to:** {real memory links or paths}
+**Sources:** {URLs for web claims, or "None; internal/hypothesis"}
+**Route:** {discovery|build|decision|content|task}
 
 ## More sparks
-{4-8 leftover one-liners, each tagged with its lens — only if more_sparks: true}
+- [{lens}] {one-liner}
 
 ## Action for today
-{the single idea worth doing now + its route}
+{single best idea + why + route}
 
 ## How I dreamed this
-{the session meta-note: creative leap, patterns fired, what was discarded, assumptions}
+{creative leap, patterns fired, what was discarded, assumptions}
 ```
 
-### Abbreviated EXAMPLE (persona: Sam, independent consultant; depth shown = 1)
+Do not pad with weak ideas. If fewer than `depth` ideas are strong, write fewer
+and say why.
+
+### Abbreviated EXAMPLE
 
 ```markdown
-# Muse — 2025-01-15
-EXAMPLE — Today's leverage is turning Sam's one-off audit into a repeatable offer.
-
-## Insights
-1. Sam books audits one client at a time but every audit produces the same
-   deliverable — that's a productizable template sitting unused. (blind spot)
+# Muse — 2025-01-15 — 001
+EXAMPLE — Today's leverage is turning Sam's repeated audit shape into a calmer,
+more predictable offer.
 
 ## Ideas
 
-## 1. Package the audit as a fixed-scope "starter" offer
-**What it is:** Turn the recurring audit deliverable into a named, fixed-price
-package so prospects buy a known thing instead of negotiating scope each time.
-**Why now:** Three audits this quarter produced near-identical reports (memory).
-**How:** Template the report; set one price; one landing section.
-**First step:** List which audit sections are identical across the last 3 clients.
-**Effort / impact:** low / high — recurring revenue.
-**Risks:** Over-fitting to one client type; mark it v1.
-**Assumption:** Assumes the 3 audits really shared structure — inferred from the
-notes index, not yet diffed file-by-file (that's the first step).
-**Recombined nodes:** [[clients/audit-notes]] × the "productize" goal × a web
-signal on fixed-scope offers.
-**Confidence:** medium — reason: pattern is visible but unverified. Falsifier:
-if the 3 reports diverge structurally, there's no template to extract.
-**Connects to:** [[offers/index]]
+### 1. Package the audit as a fixed-scope starter offer
+**Idea ID:** muse-20250115-001-a
+**Lens:** offers / productization
+**What it is:** Turn Sam's recurring audit deliverable into a named fixed-scope
+package so prospects buy a known thing instead of negotiating scope every time.
+**Why now:** Three audits shared the same report structure, and a prospect asked
+about retainers.
+**How:** Extract the repeated report sections, name the offer, draft scope limits,
+and test it with the next prospect.
+**First step:** List which audit sections were identical across the last three reports.
+**Effort / impact:** low / high
+**Risks:** Over-fitting to one client type.
+**Assumption:** Assumes the reports are structurally similar, inferred from audit notes.
+**Recombined nodes:** `memory/wiki/clients/audit-notes.md` × `dreams/seeds.md` retainer seed × `memory/wiki/offers/index.md`.
+**Confidence:** medium — visible pattern, not yet diffed file-by-file.
+**Falsifier:** If the three reports differ structurally, there is no template to extract.
+**Connects to:** `memory/wiki/offers/index.md`
+**Sources:** None; internal example.
 **Route:** build
-
-## How I dreamed this
-EXAMPLE — Leap: paired "repeated work" (audits) with the dormant "productize"
-goal via the Replicate-the-pattern technique. Discarded a flashier "build a SaaS"
-idea — too far from a solo consultant's capacity (low confidence, honored a prior
-`dropped` SaaS theme). Whole dream assumes the audits are structurally similar;
-that assumption is the first step, not a fact.
 ```
 
 ---
 
-## Quality rubric
+## 15. Promotion routing
 
-Score each dream. Two consecutive passes = ready.
+When the user picks an idea, do real routing.
+
+### Intents
+
+| Intent | Use when | Fallback |
+|---|---|---|
+| `discovery` | Needs questions, interview, research, or clarification. | `dreams/promoted/YYYY-MM-DD-NNN-{slug}.md` with open questions. |
+| `build` | Needs implementation, automation, prototype, or artifact. | `dreams/promoted/YYYY-MM-DD-NNN-{slug}.md` with scoped build note. |
+| `decision` | Needs durable decision/trade-off. | Append to `dreams/decisions.md`. |
+| `content` | Needs draft-first writing. | `dreams/promoted/YYYY-MM-DD-NNN-{slug}.md` with draft. |
+| `task` | Needs a discrete action. | `dreams/promoted/YYYY-MM-DD-NNN-{slug}.md` with task details. |
+
+### Resolution order
+
+1. If `routes:` explicitly names a capability or `file`, obey it.
+2. Else if a matching host capability is visibly exposed, use it and state why.
+3. Else use fallback.
+
+Never claim to invoke a skill/tool/command that is not visible. Never ignore a
+configured explicit route unless unsafe.
+
+After promotion:
+
+- update the idea's state in `dreams/index.md`;
+- append a `promoted` entry to `dreams/ledger.md`;
+- include resulting file/route path;
+- keep external outputs draft-first.
+
+---
+
+## 16. Scheduled mode
+
+Scheduled mode is for cron/nightly runs.
+
+Detect it from `mode: scheduled` or clear scheduler context. Behavior:
+
+- create dream file;
+- update index;
+- append run status to `dreams/run-log.md`;
+- clear seeds only after successful dream + index writes;
+- do not promote or execute routes;
+- do not ask questions unless the user is present;
+- do not mutate external systems;
+- continue without web if needed and log degradation.
+
+Suggested run-log entry:
+
+```markdown
+## [2026-06-09 23:00] success | Scheduled dream
+- dream_file: dreams/2026-06-09-001-dream.md
+- ideas: 3
+- seeds_consumed: 2
+- warnings: web unavailable; web-derived ideas marked hypotheses
+```
+
+---
+
+## 17. Privacy
+
+Treat `dreams/` as private by default. Recommend `.gitignore` for public repos:
+
+```gitignore
+# Muse private dream data
+dreams/
+```
+
+Rules:
+
+- Do not store secrets, credentials, tokens, private keys, session paths, or API
+  values.
+- Do not quote raw private communications unless the user explicitly provides and
+  asks to use them; prefer summaries.
+- Redact client/person names when appropriate.
+- External-facing content stays draft-first.
+- If a source is sensitive, cite a safe pointer and summarize safely.
+
+---
+
+## 18. Optional setup interview
+
+When explicitly invoked with "configure Muse" or similar:
+
+1. Ask language first, in English plus the most likely local language.
+2. Confirm memory style: adapt to existing, bootstrap, or none.
+3. Capture 2-4 priorities across work and life.
+4. Confirm lenses, depth, web, divergence, scheduled mode, and route preferences.
+5. Write `dreams/muse-config.md`.
+
+Keep it short. Recommend defaults.
+
+---
+
+## 19. Quality rubric
+
+A dream passes when it is:
 
 | Criterion | Pass | Fail |
 |---|---|---|
-| Language | In the configured language | Wrong/mixed language |
-| Curated | Deep mini-essays, clean | Raw one-liner dump |
-| Grounded | Every link resolves; no invented facts | Dead links; made-up specifics |
-| Self-explaining | Every idea has Assumption/Nodes/Confidence; session has meta-note | Missing reasoning trace |
-| Autonomous | Ran end-to-end; assumptions recorded when config/context was missing | Stalled for input it could infer |
-| Divergent | Non-obvious recombinations; surprises | Reworded goals |
-| Non-redundant | Nothing settled re-proposed; recurring threads handled | Re-proposes decided/dropped things |
-| Actionable | Each idea: first step + route | Vague "explore X" |
-| Timely | "Action for today" has a real reason now | Arbitrary pick |
+| Language | Configured/detected language | Wrong or mixed language |
+| Curated | Few deep mini-essays | One-line dump |
+| Grounded | Links resolve; web claims cited | Invented facts or dead links |
+| Evidence-traced | Each idea has assumption/nodes/confidence/falsifier | Missing trace |
+| Autonomous | Detects/defaults/logs assumptions | Blocks for inferable input |
+| Divergent | Non-obvious recombinations | Reworded goals |
+| Non-redundant | Honors ledger/index/decisions | Repeats dropped/decided ideas |
+| Holistic | Work + life lenses | Business-only unless configured |
+| Actionable | First step + route | Vague exploration |
+| Timely | Action-for-today has reason now | Arbitrary pick |
+| Write-safe | No overwrite; non-sensitive seeds copied exactly or sensitive seeds redacted safely | Overwrite, data loss, or seed text silently changed |
+| Private | No secrets/raw sensitive content | Leaks sensitive material |
+| Cron-safe | Scheduled run is draft-only | Scheduled run promotes or mutates external systems |
 
-If a run fails, fix the cause in this runbook or `SKILL.md`, then re-run. See
-`evals/` in the repo for application scenarios to test against.
-
----
-
-## Running on a schedule
-
-Muse runs well as a recurring (e.g. weekly) draft generator. Keep any scheduled
-run **draft-only and approval-gated**: it should dream, write the dream file,
-update the index, and stop — never send anything externally or execute a route
-without the user present. Suggested cadence: weekly. The schedule mechanism is
-host-specific (cron, a scheduler skill, an assistant runtime); Muse itself only
-needs to be invoked with its normal prompt.
+Two consecutive passes per relevant eval scenario are required before release.

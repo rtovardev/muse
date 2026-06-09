@@ -4,6 +4,41 @@ All notable changes to Muse are documented here.
 
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.2.0] — Operational hardening
+
+### Added
+- **Dream layer framing.** Clarified that Muse is independent and adapts to the
+  user's existing environment instead of imposing a memory architecture.
+- **Internal memory discipline.** Documented Karpathy-style source/reflection
+  separation, source hierarchy, assumptions, and consent-gated fact promotion.
+- **Dream cycle.** Added Wake → Consolidate → REM divergence → Reality check →
+  Morning note → Integration as the operating loop.
+- **Non-overwriting dream filenames.** Dream files now use
+  `dreams/YYYY-MM-DD-NNN-dream.md` and idea IDs use matching sequences.
+- **Scheduled mode.** Added cron-safe/draft-only behavior and `dreams/run-log.md`.
+- **Index schema.** Formalized `dreams/index.md` rows and idea states.
+- **Write-safe seeds lifecycle.** Seeds are copied into the dream before clearing;
+  failures leave seeds untouched.
+- **Deterministic routing.** Added explicit `routes:` config, visible-capability
+  resolution, and file fallback rules.
+- **Memory proposals.** Added `dreams/memory-proposals.md` as a safe holding area
+  for facts/patterns Muse suggests promoting to canonical memory.
+- **Privacy guidance.** Added `SECURITY.md`, `.gitignore.example`, and redaction
+  rules for sensitive dream data.
+- **Compatibility and limitations.** Added environment matrix and known limits to
+  the README.
+- **Expanded eval scenarios.** Added Spanish, no-memory, web-disabled,
+  same-day-two-runs, scheduled-safe, and privacy scenarios.
+- **Lightweight checker.** Added `evals/check_dream.py` for structural validation.
+- **Sample output.** Added a complete sample dream under `examples/sample-output/`.
+
+### Changed
+- Reframed reasoning transparency as an auditable **evidence trace** instead of
+  hidden chain-of-thought.
+- Expanded memory profiles to `llm-wiki`, `markdown-vault`, `project-repo`,
+  `agent-workspace`, `host-native`, `bootstrapped`, and `none`.
+- Updated skill metadata version to `0.2.0`.
+
 ## [0.1.0] — Initial generalist release
 
 First public, generalist release. Muse began as a personal ideation skill inside

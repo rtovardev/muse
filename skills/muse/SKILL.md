@@ -1,162 +1,242 @@
 ---
 name: muse
-description: Use when the user wants proactive, divergent ideation across their whole life — says "muse", "dream", "give me ideas", "what could we do", "surprise me", "what am I missing" — or wants to drop day-to-day seeds for later. Surfaces net-new cross-domain ideas and blind-spot insights from their own accumulated memory plus live web signals. Not for stress-testing one known plan, shipping one known automation, or producing a pure research report.
+description: Use when the user wants proactive, divergent ideation across their whole life: says "muse", "dream", "give me ideas", "what could we do", "surprise me", "what am I missing", or wants to drop day-to-day seeds for later. Surfaces net-new cross-domain ideas and blind-spot insights from accumulated memory plus live signals. Not for stress-testing one known plan, shipping one known automation, or producing a pure research report.
 license: MIT
-compatibility: Designed for Claude Code, Codex, and compatible agent runtimes. Instruction-only — no runtime scripts. Uses web search/fetch for live external signals when available, and degrades gracefully without network access.
+compatibility: Designed for Claude Code, Codex, and compatible agent runtimes. Instruction-only; no runtime scripts. Uses web search/fetch for live external signals when available and degrades gracefully without network access.
 metadata:
   author: rtovardev
-  version: "0.1.0"
+  version: "0.2.0"
   repository: https://github.com/rtovardev/muse
 allowed-tools: Read Write Edit Bash WebSearch WebFetch Skill
 ---
 
 # Muse
 
-Be the user's active dreaming partner. Read across their whole life — work,
-learning, health, network, money, positioning — **dream up net-new ideas and
-surface key insights** they did not ask for, **explain your own reasoning**, then
-**execute** the one they pick. This is divergent, proactive ideation: recombine
-distant memory nodes into non-obvious ideas, scan the live web for external
-signals tied to what they are doing right now, name blind spots, deliver a small
-**curated, deeply-developed** set in the user's language — and route the winner
-into their workflow.
+Be the user's independent dream layer.
 
-Muse sits **upstream** of other skills. It generates the idea pool and routes the
-winners into them.
+Muse is not a memory architecture, task manager, scheduler, or automation system.
+It is a portable skill that adapts to the user's existing environment and dreams
+from it. Read across work, learning, health, network, money, positioning,
+relationships, and wildcards. Recombine distant context into non-obvious ideas,
+name blind spots, ground claims, write a durable dream file, and route the chosen
+idea into whatever workflow the host actually exposes.
 
-## What makes Muse different
+Internally, use Karpathy-style memory discipline: separate canonical sources from
+generated reflections, maintain navigable markdown artifacts, cite exact nodes,
+log assumptions, and never promote a dream into fact without user confirmation or
+an approved host memory workflow.
 
-- **Active** — searches the live web for signals, not just internal notes.
-- **Insightful** — names blind spots and things the user is *not* doing.
-- **Self-explaining** — every idea shows what was assumed, which nodes were
-  recombined, and how confident it is. Every session explains its creative leap.
-- **Autonomous** — runs end-to-end. Missing config or context → auto-detect and
-  assume sensible defaults, recording every assumption in the dream.
-- **Memory-agnostic** — adapts to a Karpathy LLM-Wiki, any markdown vault, or no
-  memory (which it can bootstrap).
-- **Host-adaptive** — discovers the host's skills and routes to them; falls back
-  to files when none exist. Fits any workflow.
-- **Taste-learning** — tracks what the user liked, shipped, or dropped, and adjusts.
+Muse sits upstream of other skills. It creates the idea pool; other capabilities
+may execute the winner.
 
-## The capture file is the whole point
+Muse improves over time through local markdown feedback loops: more canonical
+memory gives better nodes, more dreams reveal recurring threads, more ledger
+reactions teach taste, and more promoted/shipped outcomes improve future routing.
+No server or database is required.
 
-The durable dream file is the source of truth, not the chat. A Muse session that
-only talks is a failed session. Always write `dreams/{date}-dream.md`.
+## Hard rules
 
-## Autonomy: dream without being woken
+1. **Always write a dream file.** A Muse session that only talks is failed.
+2. **Never overwrite a prior dream.** Use `dreams/YYYY-MM-DD-NNN-dream.md`, where
+   `NNN` is the next unused sequence for the date.
+3. **Do not force a memory architecture.** Adapt to what exists. Bootstrap memory
+   only with explicit consent.
+4. **Keep dream memory separate from canonical memory.** Dreams can propose
+   durable facts, but they are not facts until confirmed. Put proposed memory
+   updates in `dreams/memory-proposals.md` unless an approved host memory
+   workflow exists.
+5. **Show an evidence trace, not hidden chain-of-thought.** Every deep idea needs
+   Assumption, Recombined nodes, Confidence, and Falsifier.
+6. **Do not invent host capabilities.** Use configured routes, visibly available
+   capabilities, or file fallback.
+7. **Scheduled runs are draft-only.** Never promote, send, log in, submit forms,
+   or mutate external systems from a scheduled run.
+8. **Protect seeds.** Copy non-sensitive consumed seeds exactly into the dream
+   before clearing `dreams/seeds.md`; preserve punctuation and wording. Redact
+   only sensitive content with `[REDACTED]` and note the redaction. If any write
+   fails, leave seeds untouched.
+9. **Protect privacy.** Do not copy secrets, credentials, raw private messages, or
+   sensitive client material into dreams. Redact when appropriate.
 
-**Do not gate the dream on a setup interview.** On every run:
+## Source hierarchy
 
-1. Read `dreams/muse-config.md` if it exists.
-2. If it is missing, **auto-configure**: detect language, memory layout, and a
-   vault root from the environment; assume the defaults in the runbook; write a
-   best-effort `dreams/muse-config.md`; and **record each assumption** in the
-   dream's reasoning. Offer to refine *after*, never before.
-3. Dream. Then offer to execute the chosen idea.
+Read context in this order, while respecting availability:
 
-Run the optional setup interview only if the user explicitly asks to configure,
-or if there is genuinely nothing to detect and no goals to dream from.
+1. **Canonical memory**: LLM-Wiki, Obsidian vault, markdown notes, project docs,
+   decisions logs, host-native memory, or agent workspace files.
+2. **Dream memory**: `dreams/index.md`, previous dreams, `dreams/ledger.md`,
+   `dreams/seeds.md`, `dreams/run-log.md`, `dreams/memory-proposals.md`, and
+   promoted fallbacks.
+3. **Live signals**: web search/fetch results for current projects, goals, dates,
+   tools, events, opportunities, and trends.
+4. **Assumptions**: visible in the dream whenever context could not be verified.
 
-## Reasoning transparency (required)
+Canonical memory beats dreams. Web claims require source URLs. No source means
+mark as hypothesis.
 
-Muse must explain itself. This is non-negotiable and is what makes it feel like a
-dreaming partner rather than a list generator.
+## Config drives the run
 
-- **Per idea:** an `Assumption` (what was taken as given and why), `Recombined
-  nodes` (the exact memory pages + web signals crossed to reach it), and
-  `Confidence` (high/med/low + reason + a one-line falsifier).
-- **Per session:** a closing **"How I dreamed this"** note — the creative leap,
-  which recombination patterns fired, and what was deliberately discarded and why.
+Read `dreams/muse-config.md` every run. If missing, auto-create it and continue.
+Do not stop for a setup interview unless the user explicitly asks to configure
+Muse or there is truly nothing to detect.
 
-A dream with ideas but no reasoning trace is incomplete. Re-do it.
+Supported fields:
 
-## Config drives everything
+- `language`: output language.
+- `mode`: `interactive` | `scheduled`.
+- `memory_profile`: `llm-wiki` | `markdown-vault` | `project-repo` |
+  `agent-workspace` | `host-native` | `bootstrapped` | `none`.
+- `memory_paths`: files/folders to read.
+- `goals`: life-wide priorities, or pointers to them.
+- `lenses`: areas to cover across work and life.
+- `depth`: number of deep ideas, default 3.
+- `more_sparks`: true/false.
+- `web_research`: true/false.
+- `divergence`: `grounded` | `balanced` | `wild`.
+- `routes`: optional explicit map for `discovery`, `build`, `decision`,
+  `content`, and `task`.
+- `privacy`: optional redaction/external-output preferences.
 
-Read `dreams/muse-config.md` each run (auto-created if absent):
+If a configured path is missing or empty, note it in the dream and continue.
+Never fabricate memory content.
 
-- `language` — output language.
-- `memory_profile` — `llm-wiki` | `custom` | `bootstrapped` | `none`.
-- `memory_paths` — files/folders to read.
-- `goals` — life-wide priorities to steer ideation (or a pointer).
-- `lenses` — areas to cover (work + personal).
-- `depth` — how many deep ideas (default 3) + a short "more sparks" list.
-- `web_research` — `true` to scan the live web for external signals.
-- `divergence` — `grounded` | `balanced` | `wild` (default `balanced`).
+## The dream cycle
 
-If a path is missing/empty, note it in the dream and continue. Never invent content.
+Read the full method in `references/runbook.md` before dreaming.
 
-## Workflow
+1. **Wake.** Get today's date. Pick the next unused dream sequence. Read or create
+   config. Detect language, mode, memory profile, host capabilities, and network
+   availability. Ensure `dreams/` support files exist.
+2. **Consolidate.** Read seeds, ledger, index, recent dreams, configured memory,
+   decisions/constraints, and relevant project files. Identify recurring threads
+   and taste signals.
+3. **REM divergence.** Generate a broad scratch pool across lenses using forced
+   pairing, SCAMPER, risk reframing, pattern replication, free association, and
+   wildcard mashups. Apply the divergence dial.
+4. **Reality check.** Ground claims against canonical memory and web sources.
+   Drop redundant, stale, unsafe, or taste-conflicting ideas. Verify dates,
+   prices, CFPs, and availability if they matter.
+5. **Morning note.** Write `dreams/YYYY-MM-DD-NNN-dream.md` in the configured
+   language: consumed seeds, recurring threads, insights, deep ideas, more
+   sparks, action for today, and "How I dreamed this". Update `dreams/index.md`.
+6. **Integration.** In interactive mode only, offer to execute the action for
+   today and offer to refine `dreams/muse-config.md` now that the dream has run.
+   When the user picks an idea, route it and record the outcome in the index and
+   ledger.
 
-1. **Wake.** Get today's date. Read the runbook, config (auto-create if absent),
-   `dreams/seeds.md`, `dreams/ledger.md`, recent dreams, and the configured memory.
-2. **Web scan** (if enabled). A few targeted searches tied to current work; cite
-   every source.
-3. **Recurring threads.** Skim recent dreams: flag ideas that keep resurfacing as
-   signal; check shipped/decided ideas for follow-through (don't re-propose them).
-4. **Diverge (scratch).** Generate a broad spread across lenses, forcing
-   recombination at the configured `divergence` level.
-5. **Find insights.** Name 1-3 blind spots / contradictions / neglected leverage.
-6. **Curate.** Select the best `depth` ideas; develop each as a mini-essay with
-   its reasoning trace. Keep a few leftovers as "more sparks".
-7. **Apply taste.** Drop `dropped` themes; evolve `shipped` ones.
-8. **Write** — in the configured language — `dreams/{YYYY-MM-DD}-dream.md`:
-   insights, deep ideas (with sources + reasoning), "more sparks", "action for
-   today", and the "How I dreamed this" meta-note.
-9. **Index + log.** Append a row to `dreams/index.md`.
-10. **Clear seeds.** Move consumed seeds into the dream file; empty `dreams/seeds.md`.
-11. **Offer to execute.** Present the action-for-today; when the user picks an
-    idea, **execute its route** (below) and record taste.
+## Dream file contract
 
-Full method, schemas, and defaults: **read `references/runbook.md`.**
+Every dream file contains:
+
+1. A one-line framing of today's leverage.
+2. `Seeds consumed` copied exactly if non-sensitive, preserving punctuation;
+   redacted only when needed.
+3. `Recurring threads` if any.
+4. `Insights`: 1-3 sharp blind spots, contradictions, neglected leverage points,
+   or patterns.
+5. `Ideas`: `depth` deep mini-essays. Each idea must include:
+   - stable `Idea ID` such as `muse-20260609-001-a`;
+   - What it is;
+   - Why now;
+   - How;
+   - First step;
+   - Effort / impact;
+   - Risks;
+   - Assumption;
+   - Recombined nodes;
+   - Confidence;
+   - Falsifier;
+   - Connects to;
+   - Sources, when web claims are used;
+   - Route.
+6. `More sparks` if enabled.
+7. `Action for today`.
+8. `How I dreamed this`: creative leap, recombination patterns, deliberate
+   discards, and session assumptions.
+
+A dream with ideas but no evidence traces is incomplete. Fix it before delivery.
+
+## Index contract
+
+Maintain `dreams/index.md` with this table:
+
+```markdown
+| idea_id | date | dream_file | title | lens | route | state | confidence | notes |
+|---|---|---|---|---|---|---|---|---|
+```
+
+States:
+
+```text
+dreamed -> liked -> promoted -> shipped
+dreamed -> dropped
+dreamed -> decided
+dreamed -> stale
+```
+
+On each run, add one row per deep idea. Mark the action-for-today in `notes`.
+On promotion, update the row state and append to `dreams/ledger.md`.
+
+## Seeds lifecycle
+
+Use a write-safe sequence:
+
+1. Read `dreams/seeds.md`.
+2. Copy non-sensitive consumed seeds exactly into the dream file. Do not retype,
+   summarize, translate, or normalize punctuation. Redact only sensitive values
+   with `[REDACTED]` and note the redaction.
+3. Write the dream file.
+4. Update `dreams/index.md`.
+5. Only after those succeed, replace `dreams/seeds.md` with an empty inbox
+   template.
+6. If any step fails, leave `dreams/seeds.md` untouched and append a warning to
+   `dreams/run-log.md` if possible.
 
 ## Promotion: route, don't just label
 
-When the user picks an idea, map it to an **intent** and resolve the intent to a
-host capability discovered at runtime; if none exists, use the file fallback so
-the loop always closes:
+When the user chooses an idea, map it to one intent and execute a route.
 
-| Intent | Host capability (if present) | Fallback |
+| Intent | Use when | Fallback |
 |---|---|---|
-| discovery | a brainstorm/interview skill | open questions → `dreams/promoted/` |
-| build | an automation/shipping skill | scoped build note |
-| decision | a decisions log | append `dreams/decisions.md` |
-| content | a content/drafting skill | draft, marked draft-first |
-| task | a task/capture skill or tracker | actionable task file |
+| `discovery` | Needs questions, interview, research, or clarification. | Write open questions to `dreams/promoted/`. |
+| `build` | Needs implementation, automation, prototype, or artifact. | Write scoped build note to `dreams/promoted/`. |
+| `decision` | Needs a durable decision/trade-off. | Append to `dreams/decisions.md`. |
+| `content` | Needs draft-first writing. | Write draft to `dreams/promoted/`. |
+| `task` | Needs a discrete action. | Write actionable task file to `dreams/promoted/`. |
 
-**Verify time-sensitive facts (deadlines, CFPs, event dates, prices) on the web
-before promoting** — a route built on a stale date is a likely miss. External
-actions stay draft-first and approval-gated. After executing, update the idea's
-state in `dreams/index.md` and append an outcome to `dreams/ledger.md`.
+Resolution order:
 
-## Output contract
+1. If `routes:` explicitly names a capability or `file`, obey it.
+2. Else, if the host visibly exposes a matching skill/command/log/tracker, use it
+   and name why it matched.
+3. Else, use the file fallback.
 
-Every run produces:
+Verify time-sensitive facts on the web before promotion. External-facing work
+stays draft-first and approval-gated.
 
-1. One `dreams/{date}-dream.md` — insights + `depth` deep ideas (each with
-   sources where used + reasoning trace) + "more sparks" + "action for today" +
-   "How I dreamed this", in the configured language.
-2. One updated row in `dreams/index.md`.
-3. An emptied `dreams/seeds.md`.
-4. On promotion: an executed route + a `dreams/ledger.md` entry.
+## Scheduled mode
+
+When `mode: scheduled` or the invocation clearly comes from cron/scheduler:
+
+- Produce the dream file and index.
+- Append status/warnings to `dreams/run-log.md`.
+- Do not offer or execute promotion unless the user is present later.
+- Do not clear seeds unless the dream and index were written.
+- Do not mutate external systems.
+- If web is unavailable, continue and mark affected claims as hypotheses.
 
 ## Quality bar
 
-Good only if: **right language**; **curated** (deep mini-essays, not a dump);
-**grounded** (every link resolves, every web claim cites a source, zero invented
-facts); **self-explaining** (every idea has its reasoning trace; session has its
-meta-note); **autonomous** (ran end-to-end; assumptions recorded); **insightful**
-(names a real blind spot); **divergent**; **non-redundant** (honors decisions +
-ledger); **holistic** (not only work); **actionable** (first step + route each);
-**timely**. Full rubric in the runbook.
+Good only if: correct language; curated; grounded; evidence-traced; autonomous;
+insightful; divergent; non-redundant; holistic; actionable; timely; private;
+write-safe; seeds copied exactly or safely redacted; cron-safe when scheduled.
 
 ## Safety
 
-- Read-only on files except `dreams/**`, executed promotions (which follow their
-  own host skills' rules), and — only with explicit consent — a memory bootstrap.
-- Web research is read-only retrieval. Cite sources. Never log in, submit forms,
-  or send anything.
-- Never invent facts about clients, people, or web sources. No source = mark it a
-  hypothesis.
-- `dreams/muse-config.md` and `dreams/ledger.md` are per-user and local. Keep
-  secrets out. Ideas are internal drafts; anything external stays draft-first and
-  approval-gated.
+- Read-only outside `dreams/**`, approved promotion fallbacks, and explicit
+  consent-gated memory bootstrap.
+- Web research is read-only retrieval. Cite sources.
+- Never log in, submit forms, send messages, or mutate external systems.
+- Never invent facts about people, clients, dates, prices, or web sources.
+- Never store secrets in config, ledger, dreams, or promoted files.
+- Recommend users keep `dreams/` out of public repos unless intentionally shared.

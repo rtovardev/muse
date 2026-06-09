@@ -1,35 +1,39 @@
-# Scenario: reasoning transparency
+# Scenario: evidence transparency
 
-**Pillar:** Reasoning transparency
+**Pillar:** Evidence trace
 
 ## Setup
 
-- Copy `examples/sample-vault/` to a scratch dir. Keep a config present (or let
-  cold-start create one) with `depth: 3`.
-- Dispatch a fresh subagent with only the Muse skill. Prompt: *"dream"*.
+- Copy `examples/sample-vault/` to a scratch dir.
+- Keep or create config with `depth: 3`.
+- Dispatch a fresh subagent with only the Muse skill.
+- Prompt: `dream`.
 
 ## Expected behavior
 
-Every idea explains where it came from; the session explains its creative leap.
+Every idea explains its evidence trail without exposing hidden chain-of-thought.
+The session explains the creative leap.
 
 ## Pass checklist
 
-For **each** deep idea in the dream:
-- [ ] Has an **Assumption** line stating what was taken as given and why, flagging
-      anything unverified.
-- [ ] Has a **Recombined nodes** line naming the specific memory page(s) + seed(s)
-      + web signal(s) it crossed (and the links resolve to real vault pages).
-- [ ] Has a **Confidence** line with a level (high/med/low), a reason, and a
-      one-line **falsifier**.
+For each deep idea:
 
-For the **session**:
-- [ ] Ends with a **"How I dreamed this"** note covering: the central creative
-      leap, which recombination pattern(s) fired, and what was deliberately
-      discarded and why.
+- [ ] Has `Idea ID` using `muse-YYYYMMDD-NNN-{letter}`.
+- [ ] Has `Assumption` stating what was taken as given and why.
+- [ ] Has `Recombined nodes` naming specific memory pages, seeds, prior dreams,
+      or web signals crossed.
+- [ ] Has `Confidence` with high/medium/low and a reason.
+- [ ] Has `Falsifier` with a concrete disconfirming observation.
+- [ ] Memory paths/wikilinks resolve to real vault pages.
+- [ ] Web claims, if any, carry source URLs.
+
+For the session:
+
+- [ ] Ends with `How I dreamed this` covering central creative leap,
+      recombination pattern(s), deliberate discards, and assumptions.
 
 ## Fail signals
 
-- Any idea missing any of the three trace lines.
-- "Recombined nodes" that point to pages not in the vault (invented grounding).
-- A "How I dreamed this" that just restates the ideas instead of explaining the
-  reasoning / discards.
+- Any idea missing one of the trace labels.
+- Recombined nodes point to pages not in the vault.
+- The meta-note merely restates the ideas instead of explaining the creative leap.
