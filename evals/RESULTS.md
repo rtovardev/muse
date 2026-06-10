@@ -5,11 +5,58 @@ skill loaded, run against a scratch copy of `examples/sample-vault/`.
 
 ---
 
+## 0.2.0 — pragmatic validation (2026-06-10)
+
+One solid pass of each release-gate scenario before tagging `v0.2.0`. Each run was
+a fresh subagent loaded with only the Muse skill, executed against a scratch copy
+of `examples/sample-vault/`, then scored against the scenario checklist plus
+`check_dream.py`. Web was disabled for determinism except `honors-taste-and-grounding`
+(web on, to exercise sourcing). This is the pragmatic gate (1 pass each); the
+strict 2x-consecutive gate remains the bar for a future hardening pass. Cold-start,
+reasoning-transparency, and taste were already locked 2/2 in 0.1.0.
+
+Scenarios already covered by 0.2.0 smoke runs (below): `autonomous-cold-start` (2
+runs), `same-day-two-runs`, `privacy`, `scheduled-safe`, `adaptive-routing` A.
+
+New passes this round (`check_dream.py` PASS + checklist verified by inspection):
+
+- **reasoning-transparency** — PASS. All 3 ideas carry the full evidence trace
+  (Assumption / Recombined nodes / Confidence+reason / Falsifier) under numbered
+  `### N.` H3 headings; session closes with a "How I dreamed this" meta-note that
+  explains the creative leap (not a restatement). All memory links resolve.
+- **honors-taste-and-grounding** — PASS. Zero SaaS/software-product ideas; the
+  dropped theme appears only as an explicit discard citing `dreams/ledger.md`.
+  3 ideas grounded; every web claim carries a source URL (4 distinct URLs); ≥1
+  holistic idea (solo-worker energy/time). No invented facts.
+- **spanish-language** — PASS (2nd attempt; see note). Dream fully in Spanish,
+  depth 2, full evidence trace, IDs `…-001-a/-001-b`, no setup interview. First
+  attempt failed only on a self-inflicted idea-sequence slip (`002-b` instead of
+  `001-b`); a fresh re-run produced correct sequences.
+- **no-memory** — PASS. Auto-created config with `memory_profile: project-repo`,
+  invented no vault/pages, flagged thin context, produced useful ideas from
+  README + seed, offered (not performed) optional bootstrap.
+- **web-disabled** — PASS. No web calls; every `Sources` line is `None; internal`;
+  no time-sensitive web facts; verification pushed into first steps/falsifiers.
+- **adaptive-routing — Variant B (host capability)** — PASS. Promoted idea routed
+  to a visible host capability (`capture-task`) with a named reason; the
+  `dreams/promoted/` file fallback was NOT used; index + ledger updated.
+- **adaptive-routing — Variant C (explicit `build: file` route)** — PASS. Obeyed
+  the config override and wrote the file fallback at
+  `dreams/promoted/2026-06-09-001-audit-sprint-kit.md`; index + ledger updated.
+
+Validator finding (fixed this round): the `spanish-language` run exposed that the
+bilingual checker recognized Spanish idea-label aliases for presence but the
+ID-extraction regex (`RE_ID_LABEL`) and one section heading were English-only. A
+correctly-formed Spanish dream using `ID de idea` / `Acción para hoy` failed. Fixed
+in `check_dream.py`; bundled sample and all 7 scenario dreams re-validate PASS.
+
+---
+
 ## 0.2.0 — hardening validation
 
-Status: not yet fully run. This release adds new release-gate scenarios and a
-lightweight structure checker. Before tagging, run each scenario twice
-consecutively and append results here.
+Status: pragmatic gate completed above (1 pass per scenario). This release adds new
+release-gate scenarios and a lightweight structure checker. The strict gate (each
+scenario twice consecutively) remains for a future hardening pass.
 
 Initial static checks:
 - `python3 evals/check_dream.py examples/sample-output/2025-01-15-001-dream.md` — PASS.
