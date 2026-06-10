@@ -511,10 +511,12 @@ evidence trace.
 
 Each deep idea needs:
 
+- A numbered H3 heading exactly like `### 1. {Idea name}`. Do not use `Idea ID`
+  as the heading.
 - **Assumption**: what was taken as given and why; flag unverified context.
 - **Recombined nodes**: specific memory pages, seeds, prior dreams, and web
   signals crossed to create the idea.
-- **Confidence**: high / medium / low with a reason.
+- **Confidence**: high / medium / low with a reason. Do not use numeric scores.
 - **Falsifier**: what would prove the idea wrong or not worth doing.
 
 Session close:
@@ -552,14 +554,14 @@ Session close:
 **Risks:** {honest risks or unknowns}
 **Assumption:** {taken as given and why}
 **Recombined nodes:** {real memory paths/wikilinks + seeds + web signals}
-**Confidence:** {high|medium|low — reason}
+**Confidence:** {high|medium|low — reason; do not use numeric scores}
 **Falsifier:** {one-line test that would make this wrong}
 **Connects to:** {real memory links or paths}
 **Sources:** {URLs for web claims, or "None; internal/hypothesis"}
 **Route:** {discovery|build|decision|content|task}
 
 ## More sparks
-- [{lens}] {one-liner}
+- [{lens}] {one-liner only; no Idea ID, no evidence trace, no mini-essay}
 
 ## Action for today
 {single best idea + why + route}
@@ -569,7 +571,8 @@ Session close:
 ```
 
 Do not pad with weak ideas. If fewer than `depth` ideas are strong, write fewer
-and say why.
+and say why. Do not put full idea schemas in `More sparks`; that section is only
+for short leftovers.
 
 ### Abbreviated EXAMPLE
 

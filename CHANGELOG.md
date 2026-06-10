@@ -30,13 +30,23 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/).
 - **Expanded eval scenarios.** Added Spanish, no-memory, web-disabled,
   same-day-two-runs, scheduled-safe, and privacy scenarios.
 - **Lightweight checker.** Added `evals/check_dream.py` for structural validation.
+  The checker is bilingual (English/Spanish labels and section headings) and also
+  enforces that `Confidence` starts with `high`/`medium`/`low` (no numeric scores)
+  and that `More sparks` stays one-line leftovers (no idea IDs or evidence traces).
 - **Sample output.** Added a complete sample dream under `examples/sample-output/`.
+- **Continuous integration.** Added `.github/workflows/validate.yml` to compile
+  the checker and validate the sample dream on every push and pull request.
+- **Quickstart.** Added a short "see it run" walkthrough to the README using the
+  bundled sample vault.
 
 ### Changed
 - Reframed reasoning transparency as an auditable **evidence trace** instead of
   hidden chain-of-thought.
 - Expanded memory profiles to `llm-wiki`, `markdown-vault`, `project-repo`,
   `agent-workspace`, `host-native`, `bootstrapped`, and `none`.
+- Clarified the dream-file contract: ideas use numbered `### N. Name` H3 headings
+  (never `Idea ID` as the heading), confidence is `high`/`medium`/`low` rather
+  than a numeric score, and `More sparks` are one-line leftovers only.
 - Updated skill metadata version to `0.2.0`.
 
 ## [0.1.0] — Initial generalist release

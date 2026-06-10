@@ -1,0 +1,18 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Compile the dream checker
+        run: python3 -m py_compile evals/check_dream.py
+      - name: Validate the sample dream
+        run: python3 evals/check_dream.py examples/sample-output/2025-01-15-001-dream.md

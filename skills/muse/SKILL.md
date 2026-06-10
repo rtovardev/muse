@@ -134,7 +134,9 @@ Every dream file contains:
 3. `Recurring threads` if any.
 4. `Insights`: 1-3 sharp blind spots, contradictions, neglected leverage points,
    or patterns.
-5. `Ideas`: `depth` deep mini-essays. Each idea must include:
+5. `Ideas`: `depth` deep mini-essays. Each idea must use a numbered H3 heading
+   exactly like `### 1. Idea name`, `### 2. Idea name`. Do not use `Idea ID` as
+   the heading. Under each heading, include:
    - stable `Idea ID` such as `muse-20260609-001-a`;
    - What it is;
    - Why now;
@@ -144,12 +146,13 @@ Every dream file contains:
    - Risks;
    - Assumption;
    - Recombined nodes;
-   - Confidence;
+   - Confidence, starting with `high`, `medium`, or `low` rather than a numeric score;
    - Falsifier;
    - Connects to;
    - Sources, when web claims are used;
    - Route.
-6. `More sparks` if enabled.
+6. `More sparks` if enabled. These are short one-line leftovers only. Do not add
+   Idea IDs, evidence traces, or mini-essays in `More sparks`.
 7. `Action for today`.
 8. `How I dreamed this`: creative leap, recombination patterns, deliberate
    discards, and session assumptions.

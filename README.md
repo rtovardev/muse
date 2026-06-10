@@ -118,6 +118,21 @@ with `npx skills`-style importers; pin it from `rtovardev/muse`.
 Per-user data lives in the user's own workspace under `dreams/`, never inside the
 skill. The skill and the user's private dreams stay separate.
 
+## Quickstart — see it run
+
+Try Muse against the bundled sample vault (Sam, an independent consultant) without
+touching your own data:
+
+```bash
+cp -r examples/sample-vault /tmp/muse-demo && cd /tmp/muse-demo
+# point your assistant here, then run:  /muse
+# inspect the generated dream:          ls dreams/*-dream.md
+python3 /path/to/muse/evals/check_dream.py dreams/2025-*-dream.md
+```
+
+You should get a dated dream file with insights, deep ideas (each carrying an
+evidence trace), and an "action for today" — and a `PASS` from the checker.
+
 ## First run
 
 Invoke it:
