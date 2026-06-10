@@ -15,8 +15,8 @@ from pathlib import Path
 RE_FILENAME = re.compile(r"^(?P<date>\d{4}-\d{2}-\d{2})-(?P<seq>\d{3})-dream\.md$")
 RE_ID = re.compile(r"muse-(?P<date>\d{8})-(?P<seq>\d{3})-(?P<letter>[a-z])\b")
 RE_ID_LABEL = re.compile(
-    r"^(?:[-*]\s*)?(?:\*\*)?Idea ID(?:\*\*)?:?(?:\*\*)?\s*`?(?P<id>muse-\d{8}-\d{3}-[a-z])`?\b",
-    re.MULTILINE,
+    r"^(?:[-*]\s*)?(?:\*\*)?(?:Idea ID|ID de idea)(?:\*\*)?:?(?:\*\*)?\s*`?(?P<id>muse-\d{8}-\d{3}-[a-z])`?\b",
+    re.IGNORECASE | re.MULTILINE,
 )
 RE_CONFIDENCE_LABEL = re.compile(
     r"^(?:[-*]\s*)?(?:\*\*)?(?:Confidence|Confianza)(?:\*\*)?:?(?:\*\*)?\s*(?P<level>high|medium|low|alta|media|baja)\b",
@@ -26,7 +26,7 @@ RE_CONFIDENCE_LABEL = re.compile(
 REQUIRED_SECTION_ALIASES = {
     "Insights": ["## Insights", "## Percepciones", "## Ideas clave"],
     "Ideas": ["## Ideas"],
-    "Action for today": ["## Action for today", "## Acción de hoy", "## Accion de hoy"],
+    "Action for today": ["## Action for today", "## Acción de hoy", "## Accion de hoy", "## Acción para hoy", "## Accion para hoy"],
     "How I dreamed this": ["## How I dreamed this", "## Cómo soñé esto", "## Como soñé esto", "## Como sone esto"],
 }
 
