@@ -5,7 +5,7 @@ license: MIT
 compatibility: Designed for Claude Code, Codex, and compatible agent runtimes. Instruction-only; no runtime scripts. Uses web search/fetch for live external signals when available and degrades gracefully without network access.
 metadata:
   author: rtovardev
-  version: "0.2.0"
+  version: "0.3.0"
   repository: https://github.com/rtovardev/muse
 allowed-tools: Read Write Edit Bash WebSearch WebFetch Skill
 ---
@@ -57,6 +57,11 @@ No server or database is required.
    fails, leave seeds untouched.
 9. **Protect privacy.** Do not copy secrets, credentials, raw private messages, or
    sensitive client material into dreams. Redact when appropriate.
+10. **Always surface the dream in chat.** The dream file is the durable record;
+    the conversation is the human surface. A run that ends with only a file path
+    is failed. After writing the file, present the dream inline (see the in-chat
+    presentation contract) so the user reads the value without opening anything.
+    Give the file path as a footer, never as the deliverable.
 
 ## Source hierarchy
 
@@ -119,7 +124,10 @@ Read the full method in `references/runbook.md` before dreaming.
 5. **Morning note.** Write `dreams/YYYY-MM-DD-NNN-dream.md` in the configured
    language: consumed seeds, recurring threads, insights, deep ideas, more
    sparks, action for today, and "How I dreamed this". Update `dreams/index.md`.
-6. **Integration.** In interactive mode only, offer to execute the action for
+6. **Surface.** Present the dream in the conversation per the in-chat
+   presentation contract. This is mandatory in every mode where a user is reading
+   the output. On a first run, also show the workflow-integration block.
+7. **Integration.** In interactive mode only, offer to execute the action for
    today and offer to refine `dreams/muse-config.md` now that the dream has run.
    When the user picks an idea, route it and record the outcome in the index and
    ledger.
@@ -158,6 +166,54 @@ Every dream file contains:
    discards, and session assumptions.
 
 A dream with ideas but no evidence traces is incomplete. Fix it before delivery.
+
+## In-chat presentation contract
+
+After writing the dream file, render the dream in the conversation. Do not make
+the user open the file to learn what was dreamed. The file is canonical and
+complete; the chat is a faithful, readable digest of it.
+
+Always show, in the configured language:
+
+1. **The one-line framing** of today's leverage.
+2. **Insights** as a short list (the 1-3 blind spots / leverage points).
+3. **Each deep idea**, compactly: the numbered name, one line of "what it is",
+   the first step, and a compressed evidence trace (confidence + the single
+   sharpest falsifier). Keep each idea to a few lines; the file holds the full
+   mini-essay.
+4. **More sparks** as one-liners, if any.
+5. **Action for today**, called out clearly as the recommended next move.
+6. **A footer line** with the dream file path and the index path, so the user
+   knows where the durable copy lives.
+
+Keep it scannable: headings or bold labels, short lines, no wall of text. This is
+a digest, not a re-paste of the full file. The goal: the user gets the entire
+value of the dream from the chat alone, and opens the file only if they want the
+long form.
+
+## First run and workflow integration
+
+A run is a "first run" when `dreams/muse-config.md` did not exist before this run,
+or the user asks how to use Muse. On a first run, after surfacing the dream,
+append a short **"How to make Muse part of your workflow"** block. Keep it to a
+handful of lines, in the configured language:
+
+- **Invoke it anytime** with `/muse` (or "dream", "give me ideas", "what am I
+  missing"). Each run writes a new dated dream and never overwrites an old one.
+- **Drop seeds between runs.** Add one-line thoughts to `dreams/seeds.md`; the
+  next run folds them in, then safely clears the inbox.
+- **React so it learns your taste.** Tell Muse which ideas you like, drop, or
+  shipped; it records them in `dreams/ledger.md` and gets less generic over time.
+- **Pick an idea to act on.** Say which one and Muse routes it (build, decision,
+  content, research, or task) into whatever your setup exposes, or a file
+  fallback.
+- **Tune it.** Edit `dreams/muse-config.md` to change language, depth, lenses,
+  the `divergence` dial (`grounded` → `wild`), web research, or run it in
+  `scheduled` mode for hands-off dreams.
+
+On later runs, do not repeat the full block. Offer it again only if the user asks
+how to use Muse, or surface a single relevant pointer (for example, mention seeds
+if the user just mentioned something worth saving for next time).
 
 ## Index contract
 
@@ -232,7 +288,8 @@ When `mode: scheduled` or the invocation clearly comes from cron/scheduler:
 
 Good only if: correct language; curated; grounded; evidence-traced; autonomous;
 insightful; divergent; non-redundant; holistic; actionable; timely; private;
-write-safe; seeds copied exactly or safely redacted; cron-safe when scheduled.
+write-safe; seeds copied exactly or safely redacted; cron-safe when scheduled;
+surfaced in chat as a readable digest, not just a file path.
 
 ## Safety
 

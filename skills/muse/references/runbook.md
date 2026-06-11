@@ -135,13 +135,49 @@ Write the durable dream file and update `dreams/index.md`.
 Only after both writes succeed, clear `dreams/seeds.md` using the safe lifecycle
 below.
 
-### 2.6 Integration
+### 2.6 Surface
+
+The dream file is the durable record. The conversation is the human surface. A
+run that ends with only a file path has failed the user.
+
+After writing the file, present the dream in chat as a faithful, scannable
+digest, in the configured language:
+
+- the one-line framing of today's leverage;
+- the insights (1-3) as a short list;
+- each deep idea compactly: numbered name, one line of "what it is", the first
+  step, and a compressed evidence trace (confidence + sharpest falsifier);
+- more sparks as one-liners, if any;
+- the action for today, called out as the recommended move;
+- a footer line with the dream file path and the index path.
+
+This is a digest, not a re-paste of the full file. The user should get the whole
+value from the chat and open the file only for the long form.
+
+On a **first run** (config did not exist before this run, or the user asks how to
+use Muse), append a short "How to make Muse part of your workflow" block after the
+digest. Keep it to a handful of lines:
+
+- invoke `/muse` (or "dream", "give me ideas", "what am I missing") anytime; each
+  run writes a new dated dream and never overwrites an old one;
+- drop one-line seeds into `dreams/seeds.md` between runs;
+- react to ideas (liked / dropped / shipped) so the ledger teaches taste;
+- pick an idea and Muse routes it into the host or a file fallback;
+- tune `dreams/muse-config.md`: language, depth, lenses, divergence dial, web
+  research, or `scheduled` mode.
+
+On later runs, do not repeat the block; offer it again only on request, or surface
+a single relevant pointer.
+
+### 2.7 Integration
 
 In interactive mode, offer the action for today, ask what the user wants to
 pursue, and offer to refine `dreams/muse-config.md` after the dream has run. When
 the user chooses an idea, route it and record the outcome.
 
-In scheduled mode, stop after writing/indexing. The scheduled dream is a draft.
+In scheduled mode, stop after writing/indexing. The scheduled dream is a draft,
+but if a user later reads the scheduled output, still surface it as a digest
+rather than pointing at the file.
 
 ---
 
@@ -716,6 +752,7 @@ A dream passes when it is:
 | Holistic | Work + life lenses | Business-only unless configured |
 | Actionable | First step + route | Vague exploration |
 | Timely | Action-for-today has reason now | Arbitrary pick |
+| Surfaced | Dream shown in chat as a readable digest + file path footer | Only a file path delivered |
 | Write-safe | No overwrite; non-sensitive seeds copied exactly or sensitive seeds redacted safely | Overwrite, data loss, or seed text silently changed |
 | Private | No secrets/raw sensitive content | Leaks sensitive material |
 | Cron-safe | Scheduled run is draft-only | Scheduled run promotes or mutates external systems |

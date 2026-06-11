@@ -4,6 +4,28 @@ All notable changes to Muse are documented here.
 
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.3.0] — Visible by default
+
+### Added
+- **In-chat presentation contract.** After writing the dream file, Muse now
+  always surfaces the dream in the conversation as a readable digest (framing,
+  insights, each idea with first step + compressed evidence trace, more sparks,
+  action for today), with the file path as a footer. New Hard rule: a run that
+  ends with only a file path has failed.
+- **Surface step.** The dream cycle gains an explicit Surface step between Morning
+  note and Integration, in both `SKILL.md` and `references/runbook.md`.
+- **First-run workflow integration.** On a first run (no prior config) or on
+  request, Muse appends a short "How to make Muse part of your workflow" block:
+  how to invoke, drop seeds, react to ideas, route a pick, and tune config.
+
+### Changed
+- **Quality bar / rubric.** Added a "Surfaced" criterion: the dream must be
+  delivered as an in-chat digest, not just a file path.
+
+### Fixed
+- **Inaccessible-output failure.** Earlier runs could end by only naming the saved
+  file path, leaving users unable to read the dream. Surfacing is now mandatory.
+
 ## [0.2.0] — Operational hardening
 
 ### Added

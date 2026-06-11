@@ -1,7 +1,7 @@
 {
   "name": "muse",
   "description": "Autonomous, memory-agnostic ideation 'dream layer' for agentic coding assistants. Dreams net-new cross-domain ideas from your accumulated memory plus live web signals, explains its reasoning with evidence traces, learns your taste, and routes the winners into your workflow.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Ricardo Tovar"
   },
