@@ -99,20 +99,30 @@ See [`DESIGN.md`](DESIGN.md) for the full contract.
 
 ## Install
 
-Muse is a standard skill: a folder with a `SKILL.md`.
+Muse is a standard skill: a folder with a `SKILL.md`. This repo also ships as a
+Claude Code **plugin marketplace**, so the fastest path is two commands.
 
-**Option A — drop it in.** Copy `skills/muse/` into your assistant's skills
+**Option A — Claude Code plugin marketplace** (recommended):
+
+```text
+/plugin marketplace add rtovardev/muse
+/plugin install muse@rtovardev
+```
+
+Then invoke it with `/muse:muse`. Pull updates with `/plugin marketplace update rtovardev`.
+
+**Option B — drop it in.** Copy `skills/muse/` into your assistant's skills
 directory (`.claude/skills/` for Claude Code, `~/.agents/skills/` for Codex), so
 you have `.../skills/muse/SKILL.md`.
 
-**Option B — git submodule** (recommended if you want to pull updates):
+**Option C — git submodule** (if you want to pull updates and vendor the source):
 
 ```bash
 git submodule add https://github.com/rtovardev/muse vendor/muse
 ln -s ../../vendor/muse/skills/muse .claude/skills/muse
 ```
 
-**Option C — lockfile import.** The `skills/muse/SKILL.md` path is compatible
+**Option D — lockfile import.** The `skills/muse/SKILL.md` path is compatible
 with `npx skills`-style importers; pin it from `rtovardev/muse`.
 
 Per-user data lives in the user's own workspace under `dreams/`, never inside the

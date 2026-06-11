@@ -1,0 +1,23 @@
+{
+  "name": "rtovardev",
+  "owner": {
+    "name": "Ricardo Tovar"
+  },
+  "description": "Ricardo Tovar's public Claude Code plugins.",
+  "plugins": [
+    {
+      "name": "muse",
+      "source": "./",
+      "description": "Autonomous, memory-agnostic ideation 'dream layer' that dreams cross-domain ideas from your memory plus live web signals, with per-idea evidence traces and taste learning.",
+      "version": "0.2.0",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": [
+        "ideation",
+        "brainstorming",
+        "memory",
+        "agent"
+      ]
+    }
+  ]
+}
