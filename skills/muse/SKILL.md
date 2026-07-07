@@ -1,6 +1,12 @@
 ---
 name: muse
-description: Use when the user wants proactive, divergent ideation across their whole life: says "muse", "dream", "give me ideas", "what could we do", "surprise me", "what am I missing", or wants to drop day-to-day seeds for later. Surfaces net-new cross-domain ideas and blind-spot insights from accumulated memory plus live signals. Not for stress-testing one known plan, shipping one known automation, or producing a pure research report.
+description: >-
+  Use when the user wants proactive, divergent ideation across their whole life:
+  says "muse", "dream", "give me ideas", "what could we do", "surprise me",
+  "what am I missing", or wants to drop day-to-day seeds for later. Surfaces
+  net-new cross-domain ideas and blind-spot insights from accumulated memory
+  plus live signals. Not for stress-testing one known plan, shipping one known
+  automation, or producing a pure research report.
 license: MIT
 compatibility: Designed for Claude Code, Codex, and compatible agent runtimes. Instruction-only; no runtime scripts. Uses web search/fetch for live external signals when available and degrades gracefully without network access.
 metadata:
